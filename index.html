@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coruj IA | Assistente Jurídico MPMS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-brand">
+          <span class="topbar-icon">🦉</span>
+          <span class="topbar-title">Coruj IA</span>
+          <span class="topbar-sub">Assistente Jurídico do Ministério Público</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-config" onclick="abrirConfig()">⚙️ Configurar API</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- SUBTOOLBAR: matérias -->
+    <nav class="subtoolbar">
+      <ul id="listaMaterias" class="materias-list"></ul>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="app-body">
+      <!-- Painel esquerdo: entrada -->
+      <section class="panel panel-input">
+        <div class="panel-header">
+          <span class="panel-title">📄 Texto do processo / manifestação</span>
+          <span class="char-count" id="charCount">0 caracteres</span>
+        </div>
+        <textarea
+          id="textoProcesso"
+          placeholder="Cole aqui a petição, decisão, movimentação processual ou qualquer texto jurídico que deseja analisar..."
+        ></textarea>
+        <div class="chips-row">
+          <button class="chip" data-action="resumo">📋 Resumir</button>
+          <button class="chip" data-action="ultima-peca">🔍 Última peça</button>
+          <button class="chip" data-action="modelo">📝 Sugerir modelo</button>
+          <button class="chip" data-action="revisao">✅ Revisar texto</button>
+          <button class="chip" data-action="contradicoes">⚡ Contradições</button>
+          <button class="chip" data-action="fundamentos">⚖️ Fundamentos jurídicos</button>
+        </div>
+      </section>
+
+      <!-- Painel direito: resultado -->
+      <aside class="panel panel-result">
+        <div class="panel-header">
+          <span class="panel-title">🦉 Resultado da análise</span>
+          <div class="result-tools">
+            <button class="btn-sm" onclick="copiarResultado()">📋 Copiar</button>
+            <button class="btn-sm" onclick="baixarResultado()">⬇️ Baixar .txt</button>
+          </div>
+        </div>
+        <div id="resultado" class="result-content">
+          <div class="result-placeholder">
+            <span class="placeholder-icon">🦉</span>
+            <p>Selecione uma análise acima para começar.</p>
+            <p class="muted">A Coruj IA processará o texto usando inteligência artificial jurídica especializada no MPMS.</p>
+          </div>
+        </div>
+        <div id="loadingBar" class="loading-bar" hidden>
+          <div class="loading-fill"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- MODAL CONFIG -->
+    <div id="modalConfig" class="modal-overlay" hidden>
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>⚙️ Configurações da API</h2>
+          <button class="modal-close" onclick="fecharConfig()">✕</button>
+        </div>
+        <div class="modal-body">
+          <label for="inputApiKey">Chave da API Anthropic (Claude)</label>
+          <input
+            type="password"
+            id="inputApiKey"
+            placeholder="sk-ant-api03-..."
+            autocomplete="off"
+          />
+          <p class="modal-hint">
+            Obtenha sua chave em
+            <a href="https://console.anthropic.com/account/keys" target="_blank" rel="noopener">console.anthropic.com</a>.
+            A chave é salva <strong>apenas no seu navegador</strong> (localStorage) e nunca é enviada a servidores externos.
+          </p>
+
+          <label for="selectModelo">Modelo Claude</label>
+          <select id="selectModelo">
+            <option value="claude-haiku-4-5">claude-haiku-4-5 — rápido e econômico</option>
+            <option value="claude-sonnet-4-5" selected>claude-sonnet-4-5 — recomendado ✓</option>
+            <option value="claude-opus-4-5">claude-opus-4-5 — máxima qualidade</option>
+          </select>
+
+          <label for="inputMaxTokens">Tamanho máximo da resposta</label>
+          <select id="inputMaxTokens">
+            <option value="1024">1 024 tokens — respostas curtas</option>
+            <option value="2048" selected>2 048 tokens — padrão</option>
+            <option value="4096">4 096 tokens — respostas longas</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-primary" onclick="salvarConfig()">💾 Salvar configurações</button>
+          <button class="btn-ghost" onclick="fecharConfig()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE -->
+    <button id="corujaBtn" class="coruja-fab" onclick="toggleMenu()" title="Ações rápidas">🦉</button>
+
+    <div id="corujaMenu" class="coruja-menu" hidden>
+      <p class="coruja-menu-title">Acesso rápido</p>
+      <ul>
+        <li><button class="menu-item" data-action="resumo">📋 Gerar resumo objetivo</button></li>
+        <li><button class="menu-item" data-action="ultima-peca">🔍 Última movimentação</button></li>
+        <li><button class="menu-item" data-action="modelo">📝 Sugerir minuta inicial</button></li>
+        <li><button class="menu-item" data-action="revisao">✅ Revisar clareza e formalidade</button></li>
+        <li><button class="menu-item" data-action="contradicoes">⚡ Apontar contradições</button></li>
+        <li><button class="menu-item" data-action="fundamentos">⚖️ Identificar fundamentos</button></li>
+      </ul>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
