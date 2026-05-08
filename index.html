@@ -3,143 +3,190 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coruj IA | Assistente Jurídico MPMS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>Coruj IA — Sistema de Análise de Processos Jurídicos</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="topbar-row1">
-          <div class="topbar-brand">
-            <span class="topbar-icon">🦉</span>
-            <span class="topbar-title">Assistente Jurídico</span>
-            <span class="topbar-sub">•</span>
-            <span class="topbar-sub">Ministério Público do MS</span>
-          </div>
-          <div class="topbar-right">
-            <div class="topbar-badge">😮‍💨 Respira, vai dar certo 🌤</div>
-            <button class="btn-config" onclick="abrirConfig()">⚙ Configurações</button>
-          </div>
+    <div class="saj-shell">
+
+      <!-- TITLEBAR -->
+      <header class="saj-titlebar">
+        <span class="saj-logo">🦉</span>
+        <strong>Coruj IA — Sistema de Análise de Processos Jurídicos</strong>
+        <div class="saj-clock">
+          <span id="clockDate"></span>
+          <b id="clockTime"></b>
         </div>
-        <nav class="topbar-tabs">
-          <button class="topbar-tab active">🏠 Início</button>
-          <button class="topbar-tab">📁 Processos</button>
-          <button class="topbar-tab">📄 Modelos</button>
-          <button class="topbar-tab">📊 Relatórios</button>
-        </nav>
+      </header>
+
+      <!-- MENUBAR -->
+      <nav class="saj-menubar">
+        <span>Cadastro</span>
+        <span>Editor</span>
+        <span>Andamento</span>
+        <span>Carga</span>
+        <span>Consulta</span>
+        <span>Relatórios</span>
+        <span>Apoio</span>
+        <span>Ajuda</span>
+        <div class="saj-menu-right">
+          <input id="quickSearch" class="saj-search" placeholder="Qual funcionalidade você busca?" />
+          <span class="saj-padrao">Padrão II ▾</span>
+          <button class="saj-bell" title="Notificações">🔔</button>
+        </div>
+      </nav>
+
+      <!-- TOOLBAR -->
+      <div class="saj-toolbar">
+        <button class="tbtn active" data-tab="fluxo">📥 Carga e Importação</button>
+        <button class="tbtn" data-tab="fluxo">🔄 Fluxo de Trabalho</button>
+        <button class="tbtn" data-tab="arquivos">📂 Gerenciador de Arquivos</button>
+        <button class="tbtn" data-tab="consulta">🔍 Consulta Avançada</button>
+        <button class="tbtn" data-tab="agenda">📅 Agenda de Compromissos</button>
       </div>
-    </header>
 
-    <!-- SUBTOOLBAR: matérias -->
-    <nav class="subtoolbar">
-      <ul id="listaMaterias" class="materias-list"></ul>
-    </nav>
+      <!-- MODULEBAR -->
+      <div class="saj-modulebar">
+        <strong>Modelos</strong>
+        <span>Clique para gerar com IA</span>
+        <div class="saj-win-btns">— □ ✕</div>
+      </div>
 
-    <!-- MAIN -->
-    <div class="app-body">
-      <!-- Painel esquerdo: entrada -->
-      <section class="panel panel-input">
-        <div class="panel-header">
-          <span class="panel-title">📄 Texto do processo / manifestação</span>
-          <span class="char-count" id="charCount">0 caracteres</span>
-        </div>
-        <textarea
-          id="textoProcesso"
-          placeholder="Cole aqui a petição, decisão, movimentação processual ou qualquer texto jurídico..."
-        ></textarea>
-        <div class="chips-row">
-          <button class="chip" data-action="resumo">📋 Resumir</button>
-          <button class="chip" data-action="ultima-peca">🔍 Última peça</button>
-          <button class="chip" data-action="modelo">📝 Sugerir modelo</button>
-          <button class="chip" data-action="revisao">✅ Revisar texto</button>
-          <button class="chip" data-action="contradicoes">⚡ Contradições</button>
-          <button class="chip" data-action="fundamentos">⚖️ Fundamentos jurídicos</button>
-        </div>
-      </section>
+      <!-- MAIN AREA -->
+      <main class="saj-main">
 
-      <!-- Painel direito: resultado -->
-      <aside class="panel panel-result">
-        <div class="panel-header">
-          <span class="panel-title">🦉 Resultado da análise</span>
-          <div class="result-tools">
-            <button class="btn-sm" onclick="copiarResultado()">📋 Copiar</button>
-            <button class="btn-sm" onclick="baixarResultado()">⬇️ Baixar .txt</button>
+        <!-- LEFT: Árvore de modelos -->
+        <aside class="saj-sidebar">
+          <div class="tree-search-wrap">
+            <input id="treeSearch" class="tree-search" placeholder="Buscar modelo..." />
           </div>
-        </div>
-        <div id="resultado" class="result-content">
-          <div class="result-placeholder">
-            <span class="placeholder-icon">🦉</span>
-            <p>Selecione uma análise acima para começar.</p>
-            <p class="muted">A Coruj IA processará o texto usando inteligência artificial jurídica especializada no MPMS.</p>
+          <div id="modelsTree" class="models-tree"></div>
+        </aside>
+
+        <!-- CENTER: Área de análise -->
+        <section class="saj-content">
+          <!-- Cabeçalho da análise -->
+          <div class="content-header">
+            <span id="selectedModelName" class="content-title">Selecione um modelo para gerar</span>
+            <span id="selectedModelArea" class="content-area"></span>
           </div>
+
+          <!-- Área de entrada -->
+          <div class="input-area">
+            <div class="input-bar">
+              <label for="caseText" class="input-label">Texto do processo / manifestação</label>
+              <div class="input-actions">
+                <label class="pdf-btn" for="pdfInput">📎 PDF/DOC</label>
+                <input type="file" id="pdfInput" accept=".pdf,.txt,.docx,.rtf" hidden />
+                <span id="charCount" class="char-info">0 caracteres</span>
+              </div>
+            </div>
+            <textarea id="caseText" placeholder="Cole aqui o texto do processo, andamento, decisão ou resumo..."></textarea>
+
+            <div class="action-row">
+              <button class="saj-btn primary" data-action="resumo">📋 Resumir</button>
+              <button class="saj-btn primary" data-action="ultima-peca">🔍 Última peça</button>
+              <button class="saj-btn primary" data-action="modelo">📝 Gerar modelo</button>
+              <button class="saj-btn secondary" data-action="revisao">✅ Revisar</button>
+              <button class="saj-btn secondary" data-action="contradicoes">⚡ Contradições</button>
+              <button class="saj-btn secondary" data-action="fundamentos">⚖️ Fundamentos</button>
+            </div>
+          </div>
+
+          <!-- Resultado -->
+          <div class="result-wrap">
+            <div class="result-bar">
+              <span class="result-label">Resultado da análise</span>
+              <div class="result-tools">
+                <button class="saj-btn-sm" onclick="copiarResultado()">📋 Copiar</button>
+                <button class="saj-btn-sm" onclick="baixarResultado()">⬇️ Baixar</button>
+              </div>
+            </div>
+            <div id="loadingBar" class="saj-loading" hidden><div class="saj-loading-fill"></div></div>
+            <div id="resultado" class="result-body">
+              <div class="result-idle">
+                <span>Selecione um modelo à esquerda ou cole um texto e clique em uma ação acima.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- STATUS BAR -->
+      <footer class="saj-status">
+        <span id="statusLeft">35 modelos</span>
+        <span class="status-sep">●</span>
+        <span id="statusCerebro" class="status-cerebro">🧠 Cérebro</span>
+        <span class="status-sep">●</span>
+        <span id="statusMain">0 objetos selecionados</span>
+        <div class="status-right">
+          <span>Servidor: CORUJ-WEB</span>
+          <span class="status-sep">|</span>
+          <span>Versão: 2.0.0</span>
+          <span class="status-sep">|</span>
+          <span>Base: CorujiDB</span>
+          <span class="status-sep">|</span>
+          <span id="statusWeather">☀️ Online</span>
         </div>
-        <div id="loadingBar" class="loading-bar" hidden>
-          <div class="loading-fill"></div>
+      </footer>
+
+    </div><!-- /saj-shell -->
+
+    <!-- OWL FAB -->
+    <div class="owl-wrap">
+      <button id="owlBtn" class="owl-btn" onclick="toggleOwlMenu()" title="Coruj IA">
+        <img id="owlImg" src="https://em-content.zobj.net/source/microsoft/310/owl_1f989.png" alt="Coruj IA" />
+      </button>
+      <div id="owlMenu" class="owl-menu" hidden>
+        <div class="owl-menu-head">
+          <b>Coruj IA</b>
+          <span>Assistente jurídica — versão web</span>
         </div>
-      </aside>
+        <div class="owl-menu-grid">
+          <button class="owl-action" data-action="resumo">📋<br/>Resumir</button>
+          <button class="owl-action" data-action="ultima-peca">🔍<br/>Última peça</button>
+          <button class="owl-action" data-action="modelo">📝<br/>Gerar modelo</button>
+          <button class="owl-action" data-action="revisao">✅<br/>Revisar</button>
+          <button class="owl-action" data-action="contradicoes">⚡<br/>Contradições</button>
+          <button class="owl-action" data-action="fundamentos">⚖️<br/>Fundamentos</button>
+        </div>
+        <button class="owl-config-btn" onclick="abrirConfig(); toggleOwlMenu()">⚙️ Configurar API</button>
+      </div>
     </div>
 
     <!-- MODAL CONFIG -->
     <div id="modalConfig" class="modal-overlay" hidden>
       <div class="modal-box">
         <div class="modal-header">
-          <h2>⚙️ Configurações</h2>
-          <button class="modal-close" onclick="fecharConfig()">✕</button>
+          <strong>⚙️ Configurações da API</strong>
+          <button onclick="fecharConfig()" class="modal-x">✕</button>
         </div>
         <div class="modal-body">
-          <label for="inputApiKey">Chave da API Anthropic (Claude)</label>
-          <input
-            type="password"
-            id="inputApiKey"
-            placeholder="sk-ant-api03-..."
-            autocomplete="off"
-          />
-          <p class="modal-hint">
-            Obtenha em
-            <a href="https://console.anthropic.com/account/keys" target="_blank" rel="noopener">console.anthropic.com</a>.
-            Salva <strong>apenas no seu navegador</strong> — nunca enviada a servidores externos.
-          </p>
-
-          <label for="selectModelo">Modelo Claude</label>
+          <label>Chave da API Anthropic (Claude)</label>
+          <input type="password" id="inputApiKey" placeholder="sk-ant-api03-..." />
+          <p class="modal-hint">Obtenha em <a href="https://console.anthropic.com/account/keys" target="_blank">console.anthropic.com</a>. Salva apenas no seu navegador.</p>
+          <label>Modelo Claude</label>
           <select id="selectModelo">
-            <option value="claude-haiku-4-5">claude-haiku-4-5 — rápido e econômico</option>
+            <option value="claude-haiku-4-5">claude-haiku-4-5 — rápido</option>
             <option value="claude-sonnet-4-5" selected>claude-sonnet-4-5 — recomendado ✓</option>
             <option value="claude-opus-4-5">claude-opus-4-5 — máxima qualidade</option>
           </select>
-
-          <label for="inputMaxTokens">Tamanho da resposta</label>
+          <label>Tamanho da resposta</label>
           <select id="inputMaxTokens">
-            <option value="1024">1 024 tokens — respostas curtas</option>
+            <option value="1024">1 024 tokens — curto</option>
             <option value="2048" selected>2 048 tokens — padrão</option>
-            <option value="4096">4 096 tokens — respostas longas</option>
+            <option value="4096">4 096 tokens — longo</option>
           </select>
         </div>
         <div class="modal-footer">
-          <button class="btn-primary" onclick="salvarConfig()">💾 Salvar</button>
-          <button class="btn-ghost" onclick="fecharConfig()">Cancelar</button>
+          <button class="saj-btn primary" onclick="salvarConfig()">💾 Salvar</button>
+          <button class="saj-btn secondary" onclick="fecharConfig()">Cancelar</button>
         </div>
       </div>
     </div>
 
-    <!-- FAB -->
-    <button id="corujaBtn" class="coruja-fab" onclick="toggleMenu()" title="Ações rápidas">🦉</button>
-
-    <div id="corujaMenu" class="coruja-menu" hidden>
-      <p class="coruja-menu-title">Acesso rápido</p>
-      <ul>
-        <li><button class="menu-item" data-action="resumo">📋 Gerar resumo objetivo</button></li>
-        <li><button class="menu-item" data-action="ultima-peca">🔍 Última movimentação</button></li>
-        <li><button class="menu-item" data-action="modelo">📝 Sugerir minuta inicial</button></li>
-        <li><button class="menu-item" data-action="revisao">✅ Revisar clareza e formalidade</button></li>
-        <li><button class="menu-item" data-action="contradicoes">⚡ Apontar contradições</button></li>
-        <li><button class="menu-item" data-action="fundamentos">⚖️ Identificar fundamentos</button></li>
-      </ul>
-    </div>
-
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="saj-toast"></div>
 
     <script src="app.js"></script>
   </body>
