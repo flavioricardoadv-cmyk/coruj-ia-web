@@ -111,6 +111,37 @@ Você é pesquisador jurídico do MP-MS. Com base no texto, apresente:
 TEXTO:\n${txt}`.trim(),
 };
 
+// ── PAISAGENS ─────────────────────────────────────────────────
+const PAISAGENS = [
+  { src: "landscapes/1.jpg", legenda: "Ilhas Flutuantes" },
+  { src: "landscapes/2.jpg", legenda: "Floresta Encantada" },
+  { src: "landscapes/3.jpg", legenda: "Montanhas em Flor" },
+  { src: "landscapes/4.jpg", legenda: "Vale de Cristal" },
+  { src: "landscapes/5.jpg", legenda: "Árvore da Vida" },
+];
+let paisagemIdx   = 0;
+let paisagemTimer = null;
+
+function iniciarPaisagem() {
+  aplicarPaisagem();
+  paisagemTimer = setInterval(() => {
+    if (document.getElementById("landscapeArea").style.display === "none") return;
+    const bg = document.getElementById("landscapeBg");
+    bg.classList.add("fading");
+    setTimeout(() => {
+      paisagemIdx = (paisagemIdx + 1) % PAISAGENS.length;
+      aplicarPaisagem();
+      bg.classList.remove("fading");
+    }, 900);
+  }, 7000);
+}
+
+function aplicarPaisagem() {
+  const { src, legenda } = PAISAGENS[paisagemIdx];
+  document.getElementById("landscapeBg").style.backgroundImage = `url("${src}")`;
+  document.getElementById("landscapeCaption").textContent = legenda;
+}
+
 // ── ESTADO ────────────────────────────────────────────────────
 let modeloSelecionado = null;
 let emExecucao = false;
@@ -120,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderArvore();
   bindEvents();
   iniciarRelogio();
+  iniciarPaisagem();
   if (!localStorage.getItem("coruj_api_key")) setTimeout(abrirConfig, 600);
 });
 
@@ -299,7 +331,15 @@ async function executar(action) {
 
 // ── HELPERS ───────────────────────────────────────────────────
 function setResultado(texto) {
-  const el = document.getElementById("resultado");
+  const land = document.getElementById("landscapeArea");
+  const el   = document.getElementById("resultado");
+  if (!texto) {
+    land.style.display = "";
+    el.style.display   = "none";
+    return;
+  }
+  land.style.display = "none";
+  el.style.display   = "";
   el.innerHTML = "";
   el.textContent = texto;
 }

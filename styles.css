@@ -400,6 +400,38 @@ body {
   padding: 8px 0;
 }
 
+/* ── PAISAGEM ANIMADA ────────────────────────────────────────── */
+.landscape-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #071625 0%, #0b4f7d 50%, #17689e 100%);
+}
+.landscape-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 1;
+  transition: opacity 0.9s ease;
+}
+.landscape-bg.fading { opacity: 0; }
+.landscape-caption {
+  position: absolute;
+  bottom: 26px;
+  right: 14px;
+  color: rgba(255,255,255,.82);
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: .5px;
+  text-shadow: 0 1px 6px rgba(0,0,0,.7);
+  background: rgba(0,0,0,.22);
+  padding: 2px 9px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
 /* ── STATUS BAR ──────────────────────────────────────────────── */
 .saj-status {
   display: flex;
